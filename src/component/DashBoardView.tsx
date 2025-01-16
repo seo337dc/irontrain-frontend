@@ -56,7 +56,13 @@ const DashBoardView = () => {
           name: `${person.firstname} ${person.lastname}`,
         }));
 
-        setPersons((prev) => [...prev, ...resultPersons]);
+        setPersons((prev) => {
+          const ids = new Set(prev.map((p) => p.id)); // 중복 제거
+          const filteredResults = resultPersons.filter(
+            (person) => !ids.has(person.id) // 새 데이터 중 중복되지 않은 것만 추가
+          );
+          return [...prev, ...filteredResults];
+        });
         setCount((prev) => prev + 10);
       }
     } catch (error) {

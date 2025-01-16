@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { Fragment, useMemo, useState } from "react";
 
 import { styled } from "styled-components";
 import { CaretIcon, CheckBox, Link, SortIcon } from "@/ui";
@@ -18,10 +18,14 @@ type TProps = {
 const Table: React.FC<TProps> = ({ data }) => {
   console.log("data", data);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [expandedRows, setExpandedRows] = useState<number[]>([]);
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
 
   const handleRowSelection = (id: number) => {
     setSelectedRows((prev) =>
+      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+    );
+    setExpandedRows((prev) =>
       prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
     );
   };
@@ -115,27 +119,52 @@ const Table: React.FC<TProps> = ({ data }) => {
 
         <TbodyElement>
           {sortedData.map((person) => (
-            <TrElement key={person.email}>
-              <TdElement>
-                <CheckBox
-                  checked={selectedRows.includes(person.id)} // 행 선택 상태
-                  onChange={() => handleRowSelection(person.id)} // 체크박스 토글
-                />
-              </TdElement>
-              <TdElement>
-                <CaretIcon className="cursor-pointer" />
-              </TdElement>
-              <TdElement>{person.birthday}</TdElement>
-              <TdElement>
-                {person.firstname} {person.lastname}
-              </TdElement>
-              <TdElement>{person.email}</TdElement>
-              <TdElement>{person.gender}</TdElement>
-              <TdElement>{person.phone}</TdElement>
-              <TdElement>
-                <Link src={person.website} />
-              </TdElement>
-            </TrElement>
+            <Fragment key={person.id}>
+              <TrElement key={person.email}>
+                <TdElement>
+                  <CheckBox
+                    checked={selectedRows.includes(person.id)}
+                    onChange={() => handleRowSelection(person.id)}
+                  />
+                </TdElement>
+                <TdElement>
+                  <CaretIcon
+                    type={expandedRows.includes(person.id) ? "down" : "right"}
+                  />
+                </TdElement>
+                <TdElement>{person.birthday}</TdElement>
+                <TdElement>
+                  {person.firstname} {person.lastname}
+                </TdElement>
+                <TdElement>{person.email}</TdElement>
+                <TdElement>{person.gender}</TdElement>
+                <TdElement>{person.phone}</TdElement>
+                <TdElement>
+                  <Link src={person.website} />
+                </TdElement>
+              </TrElement>
+
+              {expandedRows.includes(person.id) && (
+                <SubRow>
+                  <td colSpan={8}>
+                    <AddressInfo>
+                      <p>
+                        <strong>Address:</strong> {person.address.street},{" "}
+                        {person.address.city}, {person.address.country} (
+                        {person.address.zipcode})
+                      </p>
+                      <p>
+                        <strong>Latitude:</strong> {person.address.latitude},{" "}
+                      </p>
+
+                      <p>
+                        <strong>Longitude:</strong> {person.address.longitude}
+                      </p>
+                    </AddressInfo>
+                  </td>
+                </SubRow>
+              )}
+            </Fragment>
           ))}
         </TbodyElement>
       </TableElement>
@@ -180,4 +209,22 @@ const TrElement = styled.tr`
 const TdElement = styled.td`
   padding: 10px;
   border: 1px solid #ddd;
+`;
+
+const SubRow = styled.tr`
+  background-color: #fafafa;
+`;
+
+const AddressInfo = styled.div`
+  padding: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fefefe;
+
+  display: flex;
+  justify-content: center;
+  gap: 4px;
 `;
