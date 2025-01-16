@@ -12,12 +12,16 @@ const App: React.FC = () => {
 
   useEffect(() => {
     getPersonsApi({
-      quantity: 10,
+      quantity: 100,
       gender: "female",
       startDate: "2005-01-01",
     }).then((personsData) => {
       const resultPersons: TPerson[] = personsData.map((person) => {
-        return { ...person, isSelect: false };
+        return {
+          ...person,
+          isSelect: false,
+          name: `${person.firstname} ${person.lastname}`,
+        };
       });
       setPersons(resultPersons);
     });

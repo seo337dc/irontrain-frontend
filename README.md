@@ -17,3 +17,11 @@
 - 아이콘 관련 분리: Sort, Caret
 
 ## 2. api 객체화 및 express 적용으로 cors 해결
+
+## 3. 테이블 이름 정렬
+
+- 문제 : API 응답 데이터에서 이름이 firstname과 lastname으로 분리되어 있어, 정렬 로직 적용이 어려움.
+- 해결 방법
+  - 응답 데이터를 변환하여 name 필드를 추가
+    - firstname과 lastname을 합친 name 필드 생성.
+    - 상태(state)에 name 필드를 포함하여 정렬 로직에서 사용.
