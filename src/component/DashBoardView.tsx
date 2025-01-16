@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Table } from "@/ui";
 
-import HeaderSection from "./HeaderSection";
+import HeaderFilter from "./HeaderFilter";
 
 import { getPersonsApi } from "@/util/api";
 import useSearchStore from "@/store/useSearchStore";
@@ -49,7 +49,7 @@ const DashBoardView = () => {
 
   return (
     <div className="pt-4">
-      <HeaderSection />
+      <HeaderFilter />
       <Table data={filteredPersons} />
     </div>
   );
