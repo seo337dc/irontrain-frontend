@@ -6,9 +6,9 @@ import React, {
   useCallback,
 } from "react";
 
-import { Table } from "@/ui";
+import { Table } from "@/component/ui";
 import HeaderFilter from "./HeaderFilter";
-import LoadingTemplate from "./template/LoadingTemplate";
+import LoadingTemplate from "../template/LoadingTemplate";
 
 import { getPersonsApi } from "@/util/api";
 import useSearchStore from "@/store/useSearchStore";
@@ -17,7 +17,7 @@ import useDateStore from "@/store/useDateStore";
 
 import { EXCEPTION_SEARCH_FILTER } from "@/util/constant";
 
-import type { TPerson } from "@/model/person";
+import type { TGender, TPerson } from "@/model/person";
 
 const DashBoardView = () => {
   const sectionRef = useRef<HTMLDivElement | null>(null);
@@ -70,7 +70,43 @@ const DashBoardView = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [gender, selectedDate, isLoading, hasMore]);
+  }, [isLoading, hasMore]);
+
+  const fetchFilteredData = async (filterParams: {
+    gender?: TGender;
+    selectedDate?: Date;
+  }) => {
+    setIsLoading(true); // 로딩 시작
+    setHasMore(true); // 추가 데이터 가능 상태로 초기화
+    setCount(100); // 초기 데이터 개수
+
+    try {
+      // 기존 데이터 초기화
+      setPersons([]);
+
+      // API 호출
+      const response = await getPersonsApi({
+        quantity: 100,
+        gender: filterParams.gender || gender,
+        startDate: filterParams.selectedDate
+          ? filterParams.selectedDate.toISOString().split("T")[0]
+          : "2005-01-01",
+      });
+
+      // 결과 데이터 설정
+      setPersons(
+        response.map((person) => ({
+          ...person,
+          isSelect: false,
+          name: `${person.firstname} ${person.lastname}`,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching filtered data:", error);
+    } finally {
+      setIsLoading(false); // 로딩 종료
+    }
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -97,11 +133,16 @@ const DashBoardView = () => {
     };
   }, [fetchData, hasMore, isLoading]);
 
+  // 성별 필터 api 라이플사이클
   useEffect(() => {
-    setHasMore(true);
-    setCount(100);
-    fetchData();
-  }, [gender, selectedDate]);
+    fetchFilteredData({ gender, selectedDate: selectedDate || undefined });
+  }, [gender]);
+
+  // 날짜 필터 api 라이플사이클
+  useEffect(() => {
+    if (!selectedDate) return;
+    fetchFilteredData({ gender: gender || "", selectedDate: selectedDate });
+  }, [selectedDate]);
 
   const filteredPersons = useMemo(() => {
     if (!searchText) return persons;

@@ -1,4 +1,4 @@
-export type TGender = "female" | "male" | "";
+export type TGender = "female" | "male" | "other" | "";
 
 export interface ParamReqPerson {
   quantity: number;

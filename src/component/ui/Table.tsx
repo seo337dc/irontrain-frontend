@@ -1,6 +1,6 @@
 import React, { Fragment, useMemo, useState } from "react";
 import styled from "styled-components";
-import { CaretIcon, CheckBox, Link, SortIcon, ToolTip } from "@/ui";
+import { CaretIcon, CheckBox, Link, SortIcon, ToolTip } from "@/component/ui";
 
 import type { TPerson } from "@/model/person";
 
@@ -138,7 +138,11 @@ const Table: React.FC<TProps> = ({ data }) => {
                 <TdElement>
                   <ToolTip content={person.email} />
                 </TdElement>
-                <TdElement>{person.gender}</TdElement>
+                <TdElement>
+                  {person.gender === "female" && "여성"}
+                  {person.gender === "male" && "남성"}
+                  {person.gender === "other" && "기타"}
+                </TdElement>
                 <TdElement>{person.phone}</TdElement>
                 <TdElement>
                   <Link src={person.website} />
