@@ -14,7 +14,7 @@ const FilterGender = () => {
 
   return (
     <section className="flex items-center gap-4">
-      <h3 className="text-sm font-semibold">성별 필터</h3>
+      <h3 className="text-sm font-semibold">성별</h3>
       <RadioGroup
         options={genderOptions}
         selectedValue={gender}
