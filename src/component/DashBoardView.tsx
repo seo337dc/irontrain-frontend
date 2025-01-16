@@ -1,43 +1,99 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Table } from "@/ui";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 
+import { Table } from "@/ui";
 import HeaderFilter from "./HeaderFilter";
+import LoadingTemplate from "./template/LoadingTemplate";
 
 import { getPersonsApi } from "@/util/api";
 import useSearchStore from "@/store/useSearchStore";
 import useGenderStore from "@/store/useGenderStore";
 import useDateStore from "@/store/useDateStore";
 
-import type { TPerson } from "@/model/person";
 import { EXCEPTION_SEARCH_FILTER } from "@/util/constant";
 
-// TODO : 그 방법을 사용해서 입력 이벤트가 끝난 후 api 동작되도록 세팅 필요
+import type { TPerson } from "@/model/person";
 
 const DashBoardView = () => {
-  const [persons, setPersons] = useState<TPerson[]>([]);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const observerRef = useRef<HTMLDivElement | null>(null);
 
   const { searchText } = useSearchStore();
   const { gender } = useGenderStore();
   const { selectedDate } = useDateStore();
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const [persons, setPersons] = useState<TPerson[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [count, setCount] = useState<number>(0);
+
+  // fetch api
+  const fetchData = useCallback(async () => {
+    if (isLoading || !hasMore) return;
+
+    setIsLoading(true);
+
+    try {
       const response = await getPersonsApi({
-        quantity: 100,
+        quantity: count,
         gender,
         startDate: selectedDate
           ? selectedDate.toISOString().split("T")[0]
           : "2005-01-01",
       });
 
-      const resultPersons: TPerson[] = response.map((person) => ({
-        ...person,
-        isSelect: false,
-        name: `${person.firstname} ${person.lastname}`,
-      }));
-      setPersons(resultPersons);
-    };
+      if (response.length === 0) {
+        setHasMore(false);
+      } else {
+        const resultPersons: TPerson[] = response.map((person) => ({
+          ...person,
+          isSelect: false,
+          name: `${person.firstname} ${person.lastname}`,
+        }));
 
+        setPersons((prev) => [...prev, ...resultPersons]);
+        setCount((prev) => prev + 10);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [gender, selectedDate, isLoading, hasMore]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasMore && !isLoading) {
+          fetchData();
+        }
+      },
+      {
+        root: sectionRef.current || null,
+        rootMargin: "100px", // 조기 로딩을 위한 여유 공간 설정
+        threshold: 1.0, // 요소가 100% 보일 때 트리거
+      }
+    );
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
+    };
+  }, [fetchData, hasMore, isLoading]);
+
+  useEffect(() => {
+    setHasMore(true);
+    setCount(100);
     fetchData();
   }, [gender, selectedDate]);
 
@@ -55,8 +111,14 @@ const DashBoardView = () => {
 
   return (
     <div className="pt-4">
+      {isLoading && <LoadingTemplate />}
+
       <HeaderFilter />
-      <Table data={filteredPersons} />
+
+      <div ref={sectionRef} className="relative overflow-y-auto h-[80vh]">
+        <Table data={filteredPersons} />
+        <div ref={observerRef} className="h-10" />
+      </div>
     </div>
   );
 };
