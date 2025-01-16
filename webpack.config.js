@@ -38,6 +38,9 @@ module.exports = {
     open: false,
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js", ".jsx"],
+    alias: {
+      "@": path.resolve(__dirname, "src"), // @를 src 폴더로 매핑
+    },
+    extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
   },
 };
