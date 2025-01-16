@@ -15,7 +15,12 @@ const App: React.FC = () => {
       quantity: 10,
       gender: "female",
       startDate: "2005-01-01",
-    }).then((data) => setPersons(data));
+    }).then((personsData) => {
+      const resultPersons: TPerson[] = personsData.map((person) => {
+        return { ...person, isSelect: false };
+      });
+      setPersons(resultPersons);
+    });
   }, []);
 
   return (

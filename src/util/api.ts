@@ -1,10 +1,9 @@
 import axios from "axios";
 
-import type { RequestModel } from "@/model";
 import type {
   ParamReqPerson,
   RequestPersonModel,
-  TPerson,
+  ResponsePersonModel,
 } from "@/model/person";
 
 const BASE_URL = "https://fakerapi.it/api/v2";
@@ -13,7 +12,7 @@ export const getPersonsApi = async ({
   quantity = 0,
   gender = "female",
   startDate = "2005-01-01",
-}: ParamReqPerson): Promise<TPerson[]> => {
+}: ParamReqPerson): Promise<ResponsePersonModel[]> => {
   try {
     const params: RequestPersonModel = {
       _quantity: quantity,
