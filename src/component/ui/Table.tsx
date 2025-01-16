@@ -92,7 +92,7 @@ const Table: React.FC<TProps> = ({ data }) => {
                 />
               </div>
             </ThElement>
-            <ThElement>
+            <ThElement onClick={() => handleSort("email")}>
               <div className="flex items-center gap-2">
                 <span>이메일</span>
                 <SortIcon
@@ -103,7 +103,7 @@ const Table: React.FC<TProps> = ({ data }) => {
               </div>
             </ThElement>
             <ThElement>성별</ThElement>
-            <ThElement>
+            <ThElement onClick={() => handleSort("phone")}>
               <div className="flex items-center gap-2">
                 <span>휴대폰</span>
                 <SortIcon
@@ -143,7 +143,7 @@ const Table: React.FC<TProps> = ({ data }) => {
                   {person.gender === "male" && "남성"}
                   {person.gender === "other" && "기타"}
                 </TdElement>
-                <TdElement>{person.phone}</TdElement>
+                <TdElement>{person.phone.replace("+", "")}</TdElement>
                 <TdElement>
                   <Link src={person.website} />
                 </TdElement>
