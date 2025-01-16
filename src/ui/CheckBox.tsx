@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { AiOutlineCheck } from "react-icons/ai";
 import { AiOutlineMinus } from "react-icons/ai";
@@ -19,16 +19,13 @@ const CheckBox: React.FC<TProps> = ({
   checked = false,
   onChange,
 }) => {
-  const [isChecked, setIsChecked] = useState(checked);
-
   const handleToggle = () => {
-    setIsChecked(!isChecked);
-    onChange && onChange(!isChecked);
+    onChange && onChange(!checked);
   };
 
   return (
-    <CheckBoxWrapper onClick={handleToggle} $isChecked={isChecked}>
-      {isChecked && icons[type]}
+    <CheckBoxWrapper onClick={handleToggle} $isChecked={checked}>
+      {checked && icons[type]}
     </CheckBoxWrapper>
   );
 };

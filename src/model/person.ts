@@ -24,7 +24,7 @@ export interface Address {
   latitude: number; // -49.674657;
   longitude: number; // 158.504335;
 }
-export interface TPerson {
+export interface ResponsePersonModel {
   id: number; //  1;
   firstname: string; //  "Norene";
   lastname: string; //  "Olson";
@@ -35,4 +35,8 @@ export interface TPerson {
   address: Address;
   website: string; //  "http://abernathy.com";
   image: string; //  "http://placeimg.com/640/480/people";
+}
+
+export interface TPerson extends ResponsePersonModel {
+  isSelect: boolean;
 }
