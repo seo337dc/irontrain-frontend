@@ -39,4 +39,5 @@ export interface ResponsePersonModel {
 
 export interface TPerson extends ResponsePersonModel {
   isSelect: boolean;
+  name: string;
 }

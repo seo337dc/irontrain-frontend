@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import { styled } from "styled-components";
 import { CaretIcon, CheckBox, Link, SortIcon } from "@/ui";
 
 import type { TPerson } from "@/model/person";
+
+// TODO : 테이블 모듈화 시 확장성 고려
+type SortConfig = {
+  key: keyof TPerson;
+  direction: "asc" | "desc";
+};
 
 type TProps = {
   data: TPerson[];
@@ -11,7 +17,8 @@ type TProps = {
 
 const Table: React.FC<TProps> = ({ data }) => {
   console.log("data", data);
-  const [selectedRows, setSelectedRows] = useState<number[]>([]); // 선택된 행 ID를 관리
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
 
   const handleRowSelection = (id: number) => {
     setSelectedRows((prev) =>
@@ -21,11 +28,36 @@ const Table: React.FC<TProps> = ({ data }) => {
 
   const handleSelectAll = () => {
     if (selectedRows.length === data.length) {
-      setSelectedRows([]); // 모두 선택 해제
+      // 모두 선택 해제
+      setSelectedRows([]);
     } else {
-      setSelectedRows(data.map((person) => person.id)); // 모두 선택
+      // 모두 선택
+      setSelectedRows(data.map((person) => person.id));
     }
   };
+
+  const handleSort = (keyParam: keyof TPerson) => {
+    setSortConfig((prev) => {
+      if (prev?.key === keyParam) {
+        return {
+          key: keyParam,
+          direction: prev.direction === "asc" ? "desc" : "asc",
+        };
+      }
+      return { key: keyParam, direction: "asc" };
+    });
+  };
+
+  const sortedData = useMemo(() => {
+    if (!sortConfig) return data;
+    return [...data].sort((a, b) => {
+      if (a[sortConfig.key] < b[sortConfig.key])
+        return sortConfig.direction === "asc" ? -1 : 1;
+      if (a[sortConfig.key] > b[sortConfig.key])
+        return sortConfig.direction === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [data, sortConfig]);
 
   return (
     <Wrapper>
@@ -34,20 +66,47 @@ const Table: React.FC<TProps> = ({ data }) => {
           <TrElement>
             <ThElement>
               <CheckBox
+                onChange={handleSelectAll}
+                type="all"
                 checked={
                   selectedRows.length > 0 && selectedRows.length === data.length
                 }
-                onChange={handleSelectAll}
-                type="all"
               />
             </ThElement>
             <ThElement>조회</ThElement>
-            <ThElement className="flex items-center gap-2">
-              <span>날짜</span>
-              <SortIcon />
+            <ThElement onClick={() => handleSort("birthday")}>
+              <div className="flex items-center gap-1">
+                <span>날짜</span>
+                <SortIcon
+                  type={
+                    sortConfig?.key === "birthday"
+                      ? sortConfig.direction
+                      : "none"
+                  }
+                />
+              </div>
             </ThElement>
-            <ThElement>이름</ThElement>
-            <ThElement>이메일</ThElement>
+            <ThElement onClick={() => handleSort("name")}>
+              <div className="flex items-center gap-1">
+                <span>이름</span>
+                <SortIcon
+                  type={
+                    sortConfig?.key === "name" ? sortConfig.direction : "none"
+                  }
+                />
+              </div>
+            </ThElement>
+
+            <ThElement onClick={() => handleSort("email")}>
+              <div className="flex items-center gap-1">
+                <span>이메일</span>
+                <SortIcon
+                  type={
+                    sortConfig?.key === "email" ? sortConfig.direction : "none"
+                  }
+                />
+              </div>
+            </ThElement>
             <ThElement>성별</ThElement>
             <ThElement>휴대폰</ThElement>
             <ThElement>웹사이트</ThElement>
@@ -55,7 +114,7 @@ const Table: React.FC<TProps> = ({ data }) => {
         </TheadElement>
 
         <TbodyElement>
-          {data.map((person) => (
+          {sortedData.map((person) => (
             <TrElement key={person.email}>
               <TdElement>
                 <CheckBox
