@@ -2,6 +2,13 @@
 
 아이언트레인 프론트엔드 과제
 
+# 사용 라이브러리
+
+- 스타일 : styled-component, tailwind
+- 상태 관리 : zustand
+- https 통신 : axios
+- react-datepicker, react-spinners, react-icons
+
 # 실행 방법
 
 - npm install
