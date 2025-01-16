@@ -1,7 +1,7 @@
 import React from "react";
-import Button from "@/ui/Button";
-import Input from "@/ui/Input";
+
 import useSearchStore from "@/store/useSearchStore";
+import { Button, Input } from "@/ui";
 
 const HeaderSection = () => {
   const { searchText, setSearchText, clear } = useSearchStore();
