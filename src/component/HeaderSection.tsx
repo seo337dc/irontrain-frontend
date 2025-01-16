@@ -1,13 +1,12 @@
 import React from "react";
-
-import HeaderSearch from "./HeaderSearch";
-import HeaderGender from "./HeaderGender";
+import FilterGender from "./filter/FilterGender";
+import FilterSearch from "./filter/FilterSearch";
 
 const HeaderSection = () => {
   return (
     <header className="w-full flex justify-around gap-4">
-      <HeaderSearch />
-      <HeaderGender />
+      <FilterSearch />
+      <FilterGender />
     </header>
   );
 };

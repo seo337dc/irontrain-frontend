@@ -9,7 +9,7 @@ const genderOptions: RadioGroupOption[] = [
   { label: "남성", value: "male" },
 ];
 
-const HeaderGender = () => {
+const FilterGender = () => {
   const { gender, setGender } = useGenderStore();
 
   return (
@@ -26,4 +26,4 @@ const HeaderGender = () => {
   );
 };
 
-export default HeaderGender;
+export default FilterGender;

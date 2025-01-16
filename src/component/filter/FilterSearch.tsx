@@ -3,7 +3,7 @@ import React from "react";
 import useSearchStore from "@/store/useSearchStore";
 import { Button, Input } from "@/ui";
 
-const HeaderSearch = () => {
+const FilterSearch = () => {
   const { searchText, setSearchText, clear } = useSearchStore();
 
   return (
@@ -19,4 +19,4 @@ const HeaderSearch = () => {
   );
 };
 
-export default HeaderSearch;
+export default FilterSearch;
