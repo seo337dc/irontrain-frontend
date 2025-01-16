@@ -1,5 +1,5 @@
 import React from "react";
-import { RadioGroup } from "@/ui";
+import { RadioGroup } from "@/component/ui";
 import { RadioGroupOption } from "@/model/ui";
 import useGenderStore from "@/store/useGenderStore";
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-import DashBoardView from "./component/DashBoardView";
+import DashBoardView from "./component/view/DashBoardView";
 
 const App: React.FC = () => {
   return (

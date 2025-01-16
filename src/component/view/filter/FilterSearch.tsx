@@ -1,7 +1,7 @@
 import React from "react";
 
 import useSearchStore from "@/store/useSearchStore";
-import { Button, Input } from "@/ui";
+import { Button, Input } from "@/component/ui";
 
 const FilterSearch = () => {
   const { searchText, setSearchText, clear } = useSearchStore();

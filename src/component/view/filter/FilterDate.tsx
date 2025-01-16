@@ -1,5 +1,5 @@
 import React from "react";
-import { DatePicker } from "@/ui";
+import { DatePicker } from "@/component/ui";
 import useDateStore from "@/store/useDateStore";
 
 const FilterDate = () => {
