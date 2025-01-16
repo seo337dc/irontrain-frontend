@@ -1,11 +1,9 @@
 import React, { Fragment, useMemo, useState } from "react";
-
-import { styled } from "styled-components";
-import { CaretIcon, CheckBox, Link, SortIcon } from "@/ui";
+import styled from "styled-components";
+import { CaretIcon, CheckBox, Link, SortIcon, ToolTip } from "@/ui";
 
 import type { TPerson } from "@/model/person";
 
-// TODO : 테이블 모듈화 시 확장성 고려
 type SortConfig = {
   key: keyof TPerson;
   direction: "asc" | "desc";
@@ -16,26 +14,20 @@ type TProps = {
 };
 
 const Table: React.FC<TProps> = ({ data }) => {
-  console.log("data", data);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
-  const [expandedRows, setExpandedRows] = useState<number[]>([]);
+
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
 
   const handleRowSelection = (id: number) => {
     setSelectedRows((prev) =>
       prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
     );
-    setExpandedRows((prev) =>
-      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
-    );
   };
 
   const handleSelectAll = () => {
     if (selectedRows.length === data.length) {
-      // 모두 선택 해제
       setSelectedRows([]);
     } else {
-      // 모두 선택
       setSelectedRows(data.map((person) => person.id));
     }
   };
@@ -79,7 +71,7 @@ const Table: React.FC<TProps> = ({ data }) => {
             </ThElement>
             <ThElement>조회</ThElement>
             <ThElement onClick={() => handleSort("birthday")}>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
                 <span>날짜</span>
                 <SortIcon
                   type={
@@ -91,7 +83,7 @@ const Table: React.FC<TProps> = ({ data }) => {
               </div>
             </ThElement>
             <ThElement onClick={() => handleSort("name")}>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
                 <span>이름</span>
                 <SortIcon
                   type={
@@ -100,9 +92,8 @@ const Table: React.FC<TProps> = ({ data }) => {
                 />
               </div>
             </ThElement>
-
-            <ThElement onClick={() => handleSort("email")}>
-              <div className="flex items-center gap-1">
+            <ThElement>
+              <div className="flex items-center gap-2">
                 <span>이메일</span>
                 <SortIcon
                   type={
@@ -112,15 +103,23 @@ const Table: React.FC<TProps> = ({ data }) => {
               </div>
             </ThElement>
             <ThElement>성별</ThElement>
-            <ThElement>휴대폰</ThElement>
+            <ThElement>
+              <div className="flex items-center gap-2">
+                <span>휴대폰</span>
+                <SortIcon
+                  type={
+                    sortConfig?.key === "phone" ? sortConfig.direction : "none"
+                  }
+                />
+              </div>
+            </ThElement>
             <ThElement>웹사이트</ThElement>
           </TrElement>
         </TheadElement>
-
         <TbodyElement>
           {sortedData.map((person) => (
             <Fragment key={person.id}>
-              <TrElement key={person.email}>
+              <TrElement>
                 <TdElement>
                   <CheckBox
                     checked={selectedRows.includes(person.id)}
@@ -129,22 +128,23 @@ const Table: React.FC<TProps> = ({ data }) => {
                 </TdElement>
                 <TdElement>
                   <CaretIcon
-                    type={expandedRows.includes(person.id) ? "down" : "right"}
+                    type={selectedRows.includes(person.id) ? "down" : "right"}
                   />
                 </TdElement>
                 <TdElement>{person.birthday}</TdElement>
                 <TdElement>
-                  {person.firstname} {person.lastname}
+                  <ToolTip maxWidth="120px" content={person.name} />
                 </TdElement>
-                <TdElement>{person.email}</TdElement>
+                <TdElement>
+                  <ToolTip content={person.email} />
+                </TdElement>
                 <TdElement>{person.gender}</TdElement>
                 <TdElement>{person.phone}</TdElement>
                 <TdElement>
                   <Link src={person.website} />
                 </TdElement>
               </TrElement>
-
-              {expandedRows.includes(person.id) && (
+              {selectedRows.includes(person.id) && (
                 <SubRow>
                   <td colSpan={8}>
                     <AddressInfo>
@@ -154,9 +154,8 @@ const Table: React.FC<TProps> = ({ data }) => {
                         {person.address.zipcode})
                       </p>
                       <p>
-                        <strong>Latitude:</strong> {person.address.latitude},{" "}
+                        <strong>Latitude:</strong> {person.address.latitude}
                       </p>
-
                       <p>
                         <strong>Longitude:</strong> {person.address.longitude}
                       </p>
@@ -207,8 +206,13 @@ const TrElement = styled.tr`
 `;
 
 const TdElement = styled.td`
+  position: relative;
   padding: 10px;
   border: 1px solid #ddd;
+  max-width: 250px; /* 셀의 최대 너비를 설정 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* 한 줄로 표시 */
 `;
 
 const SubRow = styled.tr`
@@ -220,11 +224,7 @@ const AddressInfo = styled.div`
   font-size: 14px;
   line-height: 1.5;
   color: #333;
+  background: #fefefe;
   border: 1px solid #ddd;
   border-radius: 4px;
-  background: #fefefe;
-
-  display: flex;
-  justify-content: center;
-  gap: 4px;
 `;

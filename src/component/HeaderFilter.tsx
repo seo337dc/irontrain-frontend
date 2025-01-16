@@ -5,7 +5,7 @@ import FilterSearch from "./filter/FilterSearch";
 
 const HeaderFilter = () => {
   return (
-    <header className="w-full flex gap-10">
+    <header className="w-full flex justify-between p-4">
       <FilterSearch />
       <FilterDate />
       <FilterGender />
