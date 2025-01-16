@@ -1,7 +1,11 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { TPerson } from "./model/person";
+
+import { Table } from "./ui";
+
 import { getPersonsApi } from "./util/api";
+
+import type { TPerson } from "./model/person";
 
 const App: React.FC = () => {
   const [perons, setPersons] = useState<TPerson[]>([]);
@@ -14,18 +18,12 @@ const App: React.FC = () => {
     }).then((data) => setPersons(data));
   }, []);
 
-  console.log("perons", perons);
-
   return (
     <div className="w-screen h-screen px-12">
-      <Text>AAAA</Text>
+      <header className="w-full"></header>
+      <Table data={perons} />
     </div>
   );
 };
 
 export default App;
-
-const Text = styled.h1`
-  font-size: 18px;
-  font-weight: 700;
-`;
