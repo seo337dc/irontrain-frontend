@@ -7,6 +7,7 @@ import { getPersonsApi } from "@/util/api";
 import useSearchStore from "@/store/useSearchStore";
 
 import type { TPerson } from "@/model/person";
+import { EXCEPTION_SEARCH_FILTER } from "@/util/constant";
 
 const DashBoardView = () => {
   const [persons, setPersons] = useState<TPerson[]>([]);
@@ -33,11 +34,13 @@ const DashBoardView = () => {
   const filteredPersons = useMemo(() => {
     if (!searchText) return persons;
 
-    return persons.filter((person) =>
-      Object.values(person).some((value) =>
-        String(value).toLowerCase().includes(searchText.toLowerCase())
-      )
-    );
+    return persons.filter((person) => {
+      return Object.entries(person)
+        .filter(([key]) => !EXCEPTION_SEARCH_FILTER.includes(key))
+        .some(([, value]) =>
+          String(value).toLowerCase().includes(searchText.toLowerCase())
+        );
+    });
   }, [persons, searchText]);
 
   return (
