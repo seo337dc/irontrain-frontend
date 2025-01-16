@@ -3,20 +3,20 @@ import React from "react";
 import useSearchStore from "@/store/useSearchStore";
 import { Button, Input } from "@/ui";
 
-const HeaderSearch = () => {
+const FilterSearch = () => {
   const { searchText, setSearchText, clear } = useSearchStore();
 
   return (
-    <section className="flex items-center gap-4">
+    <section className="flex items-center gap-2">
       <Input
         width="350px"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
-        placeholder="검색어를 입력해주세요."
+        placeholder="성별, 날짜를 제외한 검색어를 입력해주세요."
       />
       <Button label="초기화" onClick={clear} />
     </section>
   );
 };
 
-export default HeaderSearch;
+export default FilterSearch;

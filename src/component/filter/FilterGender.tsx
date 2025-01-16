@@ -9,12 +9,12 @@ const genderOptions: RadioGroupOption[] = [
   { label: "남성", value: "male" },
 ];
 
-const HeaderGender = () => {
+const FilterGender = () => {
   const { gender, setGender } = useGenderStore();
 
   return (
     <section className="flex items-center gap-4">
-      <h3 className="text-sm font-semibold">성별 필터</h3>
+      <h3 className="text-sm font-semibold">성별</h3>
       <RadioGroup
         options={genderOptions}
         selectedValue={gender}
@@ -26,4 +26,4 @@ const HeaderGender = () => {
   );
 };
 
-export default HeaderGender;
+export default FilterGender;
